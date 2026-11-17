@@ -1,0 +1,28 @@
+[project]
+name = "physarum"
+version = "0.1.0"
+description = "Physarum slime-mold simulation on the GPU"
+readme = "README.md"
+authors = [
+    { name = "Jesse Fontaine", email = "jesse.fontaine98@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.5",
+    "scipy>=1.18.1",
+]
+license = "MIT"
+
+[project.scripts]
+physarum = "physarum:main"
+
+[build-system]
+requires = ["uv_build>=0.11.14,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]

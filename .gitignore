@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data (keep large datasets out of git)
+data/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Obsidian (vault config lives at the vault root, never in a repo)
+.obsidian/
+
+# Claude Code local settings
+.claude/settings.local.json
+CLAUDE.md
