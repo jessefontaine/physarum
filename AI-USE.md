@@ -2,25 +2,25 @@
 
 This document describes how AI tools were used in this project, so readers can judge the work accordingly.
 
-**Last updated:** 17-11-2026
+**Last updated:** 18-11-2026
 
 ## Tools used
 
 | Tool        | Model / version | Used for    |
 | ----------- | --------------- | ----------- |
-| Claude Code | Opus 5.5        | Scaffolding |
+| Claude Code | Opus 5.5        | Scaffolding, writing tests |
 
 ## Extent of use
 
 Tick what applies:
 
-- [ ] Ideation and project planning
+- [x] Ideation and project planning
 - [ ] Project scaffolding / boilerplate
 - [ ] Writing core logic
 - [ ] Debugging
-- [ ] Writing tests
+- [x] Writing tests
 - [ ] Writing documentation
-- [ ] Code review / refactoring
+- [x] Code review / refactoring
 
 ## Human contribution
 
