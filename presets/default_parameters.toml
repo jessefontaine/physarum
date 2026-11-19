@@ -1,0 +1,15 @@
+grid_height = 200
+grid_width = 200
+seed = 1
+
+[trail]
+decay_rate = 0.875
+diffusion_rate = 0.075
+
+[agent]
+count = 400
+step_size = 1.0
+deposit_amount = 1.0
+sensor_distance = 10.0
+sensor_angle = 1.0
+turn_speed = 0.07
