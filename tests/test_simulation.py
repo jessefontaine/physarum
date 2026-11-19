@@ -2,19 +2,40 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
-from physarum.params import SimParams, TrailParams
+from physarum.agents import Agents
+from physarum.params import AgentParams, SimParams, TrailParams
 from physarum.simulation import Simulation
 from physarum.trail import TrailMap
 
 
-@pytest.fixture
-def params():
+def _sim_params(count: int, seed: int = 0) -> SimParams:
     """Non-square settings, so a swapped height and width shows up."""
     return SimParams(
         grid_height=4,
         grid_width=6,
         trail=TrailParams(decay_rate=0.5, diffusion_rate=1.0),
+        agent=AgentParams(
+            count=count,
+            step_size=1.0,
+            deposit_amount=1.0,
+            sensor_distance=2.0,
+            sensor_angle=np.pi / 4,
+            turn_speed=0.3,
+        ),
+        seed=seed,
     )
+
+
+@pytest.fixture
+def params():
+    """No agents, so a step only runs the trail map and results stay exact."""
+    return _sim_params(count=0)
+
+
+@pytest.fixture
+def agent_params():
+    """A few agents on the same small grid."""
+    return _sim_params(count=10)
 
 
 # --- params ----------------------------------------------------------------
@@ -96,3 +117,62 @@ def test_many_steps_keep_shape_dtype_and_finite_values(params):
     assert sim.trail_map.grid.dtype == np.float32
     assert np.isfinite(sim.trail_map.grid).all()
     assert (sim.trail_map.grid >= 0).all()
+
+
+# --- agents ----------------------------------------------------------------
+
+
+def test_agents_are_built_from_params(agent_params):
+    sim = Simulation(agent_params)
+
+    assert isinstance(sim.agents, Agents)
+    assert sim.agents.ys.shape == (10,)
+    assert sim.agents.size == (4, 6)
+
+
+def test_agents_share_the_agent_params_object(agent_params):
+    """Sharing the object is what lets sliders change settings while running."""
+    sim = Simulation(agent_params)
+
+    assert sim.agents.params is agent_params.agent
+
+
+def test_one_step_deposits_then_decays(agent_params):
+    """Diffusion conserves the total, so only deposit and decay change it."""
+    sim = Simulation(agent_params)
+
+    sim.step()
+
+    expected = 10 * agent_params.agent.deposit_amount * agent_params.trail.decay_rate
+    assert sim.trail_map.grid.sum() == pytest.approx(expected, rel=1e-5)
+
+
+def test_same_seed_gives_identical_runs():
+    first = Simulation(_sim_params(count=10, seed=3))
+    second = Simulation(_sim_params(count=10, seed=3))
+
+    for _ in range(20):
+        first.step()
+        second.step()
+
+    assert_allclose(first.trail_map.grid, second.trail_map.grid)
+    assert_allclose(first.agents.heading, second.agents.heading)
+
+
+def test_different_seeds_place_agents_differently():
+    first = Simulation(_sim_params(count=10, seed=3))
+    second = Simulation(_sim_params(count=10, seed=4))
+
+    assert not np.allclose(first.agents.xs, second.agents.xs)
+
+
+def test_many_steps_with_agents_stay_finite_and_in_bounds(agent_params):
+    sim = Simulation(agent_params)
+
+    for _ in range(50):
+        sim.step()
+
+    assert np.isfinite(sim.trail_map.grid).all()
+    assert (sim.trail_map.grid >= 0).all()
+    assert ((sim.agents.ys >= 0) & (sim.agents.ys < 4)).all()
+    assert ((sim.agents.xs >= 0) & (sim.agents.xs < 6)).all()

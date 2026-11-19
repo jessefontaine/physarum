@@ -1,3 +1,6 @@
+from numpy.random import Generator, default_rng
+
+from physarum.agents import Agents
 from physarum.params import SimParams
 from physarum.trail import TrailMap
 
@@ -19,13 +22,25 @@ class Simulation:
     def __init__(self, params: SimParams) -> None:
 
         self.params: SimParams = params
+        self.rng: Generator = default_rng(self.params.seed)
 
         # create trail map
-        self.trail_map: TrailMap = TrailMap(
+        self.trail_map = TrailMap(
             size=self.params.size,
             params=self.params.trail
         )
 
+        # create agents
+        self.agents = Agents(
+            size=self.params.size,
+            rng=self.rng,
+            params=self.params.agent,
+        )
+
     def step(self) -> None:
         """Advance one frame."""
+        readings = self.agents.sense(self.trail_map.grid)
+        self.agents.turn(readings)
+        self.agents.move()
+        self.agents.deposit(self.trail_map.grid)
         self.trail_map.step()
