@@ -4,6 +4,28 @@ Working notes, newest entries first. The overall plan is in [design-notes.md](de
 
 ---
 
+## 2026-11-20: 
+
+**Goal:** Add loading and saving settings to files.
+
+**Done:**
+- Added `from_dict`, `to_dict`, `from_toml` and `to_toml` methods for file loading.
+- Created helper function to check if dataclass fields and dict keys match.
+- Created a field metadata property to check bounded values.
+- Created a subclass that validates fields against their bounded values. Imported by other parameter classes.
+- Created preset folder and default setting file.
+- Added `tomli-w` with uv.
+
+**Next:**
+- Find a way to live update the params while the simulation is running.
+- See about adding multiple species of mold that interact differently and have differen colors.
+- Output function to save a image or gif to disk, with a parameter sidecar (which includes frame nr(s)!)
+
+**Commits:**
+- `197ad5a` Environment updates
+- `281b9b5` Added toml loading and dumping to parameters
+- `cd92b63` Default presets file
+
 ## 2026-11-19: Added agents class and tested it's new parameters
 
 **Goal:** Create agents class that deposits pheromones and follows trails.
