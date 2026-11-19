@@ -4,6 +4,37 @@ Working notes, newest entries first. The overall plan is in [design-notes.md](de
 
 ---
 
+## 2026-11-19: Added agents class and tested it's new parameters
+
+**Goal:** Create agents class that deposits pheromones and follows trails.
+
+**Done:**
+- `Agents` created in `agents.py`. It stores agent positions and headings on sub-index values, and can move them. They can place a pheromone on the grid, and sense the grids pheromones to decide their next heading.
+- `AgentParams` in `params.py` to store parameters that can be live updated.
+- Edited existing tests that were written before agents existed, and new tests for agents. This was done by Claude.
+
+**Next:**
+- Make the params loadable from a file.
+- Find a way to live update the params while the simulation is running.
+- See about adding multiple species of mold that interact differently and have differen colors.
+- Output function to save a image or gif to disk, with a parameter sidecar (which includes frame nr(s)!)
+
+**Note:**
+An example of what it looks like now!
+
+![First networks](img/2026-11-19_first-networks.png)
+```
+height, width = 200, 200
+decay_rate, diffusion_rate = 0.875, 0.075
+count = 400
+step_size, deposit_amount = 1, 1
+sensor_distance, sensor_angle = 10, 1
+turn_speed = 0.07
+seed = 1
+```
+
+**Commits:** `dbb84a6` Added agents to the simulation
+
 ## 2026-11-18: Create prototype in numpy and move it into modules
 
 **Goal:** Create a prototype of the world grid and experiment with how it can be displayed in matplotlib
@@ -21,8 +52,8 @@ Working notes, newest entries first. The overall plan is in [design-notes.md](de
 - Create agents class that will deposit pheromones and follow trails.
 
 **Commits:**
-- `8f9408f0aa81ba57a776c0c3500a2453c49f5204` Prototype of creating, running and displaying the map that the agents will later live in.
-- `a95ad7f748beebfe0ef500b30aa0a9e218708bb8` Moved prototype script into modules
+- `8f9408f` Prototype of creating, running and displaying the map that the agents will later live in.
+- `a95ad7f` Moved prototype script into modules
 
 
 ## 2026-11-17: Repo scaffolding and plan for the first step
@@ -43,4 +74,4 @@ Working notes, newest entries first. The overall plan is in [design-notes.md](de
 **Next:**
 - Step 1 would be to build a prototype in python of how the world is gonna behave. See if the diffuse and decay work well.
 
-**Commits:** `598f803266cae7024851e9f846858bf7fc2b5ca4` Initial project scaffold
+**Commits:** `598f803` Initial project scaffold
