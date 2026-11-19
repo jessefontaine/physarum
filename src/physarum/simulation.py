@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Self
+
 from numpy.random import Generator, default_rng
 
 from physarum.agents import Agents
@@ -36,6 +39,10 @@ class Simulation:
             rng=self.rng,
             params=self.params.agent,
         )
+
+    @classmethod
+    def from_file(cls, path: str | Path) -> Self:
+        return cls(SimParams.from_toml(path))
 
     def step(self) -> None:
         """Advance one frame."""
