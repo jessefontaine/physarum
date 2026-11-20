@@ -143,6 +143,15 @@ def test_missing_file(tmp_path):
 # --- key checks --------------------------------------------------------------
 
 
+def test_from_dict_ignores_capture_table(params):
+    d = params.to_dict() | {"capture": {"kind": "png", "frame_start": 3}}
+    assert SimParams.from_dict(d) == params
+
+def test_from_dict_still_rejects_other_unknown_keys(params):
+    with pytest.raises(ValueError, match="unknown keys"):
+        SimParams.from_dict(params.to_dict() | {"extra": 1})
+
+
 def test_unknown_top_level_key(params_dict):
     params_dict["colour"] = "red"
     with pytest.raises(ValueError, match=r"SimParams: unknown keys \['colour'\]"):

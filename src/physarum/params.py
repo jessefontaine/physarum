@@ -137,6 +137,10 @@ class SimParams(_Validated):
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> Self:
+
+        # remove any capture keys when loading
+        d = {k: v for k, v in d.items() if k != "capture"}
+
         _check_keys(cls, d)
 
         # check whether sub dictionaries are formatted directly

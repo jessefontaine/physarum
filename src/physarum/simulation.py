@@ -40,14 +40,24 @@ class Simulation:
             params=self.params.agent,
         )
 
+        # step counter to keep track of states
+        self.frame: int = 0
+
     @classmethod
     def from_file(cls, path: str | Path) -> Self:
         return cls(SimParams.from_toml(path))
 
     def step(self) -> None:
         """Advance one frame."""
+
+        # agent actions
         readings = self.agents.sense(self.trail_map.grid)
         self.agents.turn(readings)
         self.agents.move()
         self.agents.deposit(self.trail_map.grid)
+
+        # trail update, diffuse and decay
         self.trail_map.step()
+
+        # track frame change
+        self.frame += 1

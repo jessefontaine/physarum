@@ -119,6 +119,13 @@ def test_many_steps_keep_shape_dtype_and_finite_values(params):
     assert (sim.trail_map.grid >= 0).all()
 
 
+def test_frame_counts_steps(params):
+    sim = Simulation(params)
+    assert sim.frame == 0
+    sim.step(); sim.step()
+    assert sim.frame == 2
+
+
 # --- agents ----------------------------------------------------------------
 
 
