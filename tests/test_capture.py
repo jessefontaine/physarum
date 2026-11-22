@@ -1,5 +1,8 @@
+import tomllib
+
 import numpy as np
 import pytest
+from PIL import Image
 
 from physarum.capture import Recorder
 from physarum.params import AgentParams, SimParams, TrailParams
@@ -54,3 +57,46 @@ def test_note_change_is_recorded(params):
     rec.note_change(20, "agent.sensor_angle", 0.6)
     assert rec.changes == [{"frame": 20, "key": "agent.sensor_angle", "value": 0.6}]
 
+def _filled(params, tmp_path, n=5, **kw):
+    rec = Recorder(params, out_dir=tmp_path, **kw)
+    for f in range(1, n + 1):
+        rec.push(f, np.full(params.size, f / 10, np.float32))
+    return rec
+
+def test_save_with_empty_buffer_returns_none(params, tmp_path):
+    assert Recorder(params, out_dir=tmp_path).save_png("magma") is None
+    assert list(tmp_path.iterdir()) == []
+
+def test_png_size_and_sidecar(params, tmp_path):
+    path = _filled(params, tmp_path, upscale=2).save_png("magma")
+    assert Image.open(path).size == (params.grid_width * 2, params.grid_height * 2)
+    assert path.stem.endswith("_f5-5")
+    side = tomllib.loads(path.with_suffix(".toml").read_text())
+    assert side["capture"]["kind"] == "png" and side["capture"]["colormap"] == "magma"
+    assert side["capture"]["reproducible"] is True
+    assert SimParams.from_toml(path.with_suffix(".toml")) == params
+
+def test_gif_has_all_buffered_frames(params, tmp_path):
+    path = _filled(params, tmp_path, n=5, vmax=1.0).save_gif("bone", fps=10)
+    img = Image.open(path)
+    assert img.n_frames == 5 and img.size == (params.grid_width, params.grid_height)
+    cap = tomllib.loads(path.with_suffix(".toml").read_text())["capture"]
+    assert (cap["frame_start"], cap["frame_end"], cap["fps"]) == (1, 5, 10)
+
+def test_sidecar_keeps_frame0_params(params, tmp_path):
+    rec = _filled(params, tmp_path)
+    params.agent.sensor_angle = 0.123          # live change after construction
+    loaded = SimParams.from_toml(rec.save_png("magma").with_suffix(".toml"))
+    assert loaded.agent.sensor_angle != 0.123
+
+def test_changes_mark_not_reproducible(params, tmp_path):
+    rec = _filled(params, tmp_path)
+    rec.note_change(3, "trail.decay_rate", 0.9)
+    cap = tomllib.loads(rec.save_png("magma").with_suffix(".toml").read_text())["capture"]
+    assert cap["reproducible"] is False
+    assert cap["changes"] == [{"frame": 3, "key": "trail.decay_rate", "value": 0.9}]
+
+def test_same_name_gets_suffix(params, tmp_path):
+    rec = _filled(params, tmp_path)
+    a, b = rec.save_png("magma"), rec.save_png("magma")
+    assert a != b and a.exists() and b.exists()

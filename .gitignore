@@ -16,6 +16,7 @@ htmlcov/
 
 # Data (keep large datasets out of git)
 data/
+captures/
 
 # Editors / OS
 .vscode/
