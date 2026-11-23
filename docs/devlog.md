@@ -4,6 +4,30 @@ Working notes, newest entries first. The overall plan is in [design-notes.md](de
 
 ---
 
+## 2026-11-23:
+
+**Goal:** Add feature to save simulation frames and buffer to images and gifs, with sidecars. Life cycling through colormaps and keystroke actions.
+
+**Done:**
+- Added `pillow` with uv.
+- New colormap module that handles converting frames to colors. Registers a new colormap to matplotlib on import.
+- Capture module that stores a frame buffer of the simulation and can store to gif or pngs, with a sidecar of imformation to replicate.
+- Added keystroke actions to renderer. We can now save pngs, gifs, and cycle colormaps.
+- Tests for new modules and methods written by Claude.
+
+**Next:**
+- Update README.md
+- Making live updates to the parameters.
+- Multiple species of mold.
+
+**Commits:**
+- `ad15b0e` Added a frame counter.
+- `c744528` Added colormap cycle with custom physarum map
+- `1d6d129` Added Recorder rolling buffer and change log
+- `d514487` Added saving png and gif methods to Recorder
+- `cef836e` Borderless window with colormap cycling and capture keys
+- `f3de99d` Documentation to new modules.
+
 ## 2026-11-20: 
 
 **Goal:** Add loading and saving settings to files.
