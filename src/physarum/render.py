@@ -116,4 +116,7 @@ def run_matplotlib(
         interval=50,
     )
 
+    # stop timer when the animation closes, so no frames run after teardown
+    fig.canvas.mpl_connect("close_event", lambda _event: _animation.event_source.stop())
+
     plt.show()
